@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>shaders/edge.frag</file>
+        <file>shaders/edge.vert</file>
+        <file>shaders/tri.frag</file>
+        <file>shaders/tri.vert</file>
+    </qresource>
+</RCC>
