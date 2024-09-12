@@ -14,15 +14,12 @@ int main(int argc, char *argv[])
     CPLSetConfigOption("SHAPE_ENCODING", "");
     OGRRegisterAll();
     //w.geoData = new CRSFile("E:/宁夏/矢量文件/示范区.shp");
-    w.geoData = new CRSFile("E:/课题组/垦利/后修正/gendi0815.shp");
-    w.geoData->readExteriorRing();
-    w.geoData->splitPoly2Tri();
-    w.gisViewWindow->setCurrentCrsFile(w.geoData);
-    w.gisViewWindow->readExteriorRingAsBuffer();
-    w.gisViewWindow->readTriAsBuffer();
-    w.gisViewWindow->setEnvelop();
-    w.gisViewWindow->updateColor();
-    w.gisViewWindow->updateProjection();
+    auto geoData0 = new CRSFile("E:/课题组/垦利/后修正/water_version2.shp");
+    auto geoData1 = new CRSFile("E:/课题组/垦利/后修正/gendi0815.shp");
+    w.model->addCRSFile(geoData0);
+    w.gisViewWindow->initialNewCrsFile(geoData0);
+    w.model->addCRSFile(geoData1);
+    w.gisViewWindow->initialNewCrsFile(geoData1);
     w.gisViewWindow->update();
     return a.exec();
 }

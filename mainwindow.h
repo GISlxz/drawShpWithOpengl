@@ -7,6 +7,7 @@
 #include <QListView>
 #include "gisview.h"
 #include "crsfile.h"
+#include "crsfilemodel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,6 +27,7 @@ private:
 
 public:
     GISView* gisViewWindow;
-    CRSFile* geoData;
+    QListView *listView;
+    CRSFileModel *model;
 };
 #endif // MAINWINDOW_H

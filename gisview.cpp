@@ -27,11 +27,30 @@ void GISView::paintGL()
 {
     glClearColor(1.0f,1.0f,1.0f,1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    if(this->currentCrsFile != nullptr){
-        drawTri();
-        drawExteriorRing();
+    if(this->crsfiles != nullptr){
+        int crsNum = crsfiles->size();
+        for(int index = crsNum-1;index>=0;index--){
+            setCurrentCrsFile((*crsfiles)[index]);
+            updateProjection();
+            updateColor();
+            drawTri();
+            drawExteriorRing();
+        }
     }
     glBindVertexArray(0);
+}
+
+void GISView::initialNewCrsFile(CRSFile *newCrsFile)
+{
+    setCurrentCrsFile(newCrsFile);
+    readExteriorRingAsBuffer();
+    readTriAsBuffer();
+    newCrsFile->setVBOandVAO(QVector<unsigned int>{vboedge,vaoedge,vbotri,vaotri});
+    newCrsFile->setTriNum(triNum);
+    if(initialEnvelop == false){
+        setEnvelop(newCrsFile);
+        initialEnvelop = true;
+    }
 }
 
 void GISView::readExteriorRingAsBuffer()
@@ -103,6 +122,7 @@ void GISView::drawTri()
 
 void GISView::prepareShaderPrograms()
 {
+    qDebug()<<"start initial program";
     shaderProgramEdge.addShaderFromSourceFile(QOpenGLShader::Vertex,":/shaders/edge.vert");
     shaderProgramEdge.addShaderFromSourceFile(QOpenGLShader::Fragment,":/shaders/edge.frag");
     bool success = shaderProgramEdge.link();
@@ -144,12 +164,12 @@ void GISView::setEnvelop(const CRSFile *targetFile)
     //如果X轴缩放比大
     if(aspectRatioX>aspectRatioY){
         envelope.MaxY = centerPointF.y() + (envelope.MaxY-centerPointF.y()) * (aspectRatioX/aspectRatioY);
-        envelope.MinY = centerPointF.y() - (envelope.MaxY-centerPointF.y()) * (aspectRatioX/aspectRatioY);
+        envelope.MinY = centerPointF.y() - (centerPointF.y()-envelope.MinY) * (aspectRatioX/aspectRatioY);
     }
     //如果Y轴缩放比大
     else if(aspectRatioX<aspectRatioY){
         envelope.MaxX = centerPointF.x() + (envelope.MaxX-centerPointF.x()) * (aspectRatioY/aspectRatioX);
-        envelope.MinX = centerPointF.x() - (envelope.MaxX-centerPointF.x()) * (aspectRatioY/aspectRatioX);
+        envelope.MinX = centerPointF.x() - (centerPointF.x()-envelope.MinX) * (aspectRatioY/aspectRatioX);
     }
 }
 
@@ -267,6 +287,19 @@ void GISView::wheelEvent(QWheelEvent *event)
 void GISView::setCurrentCrsFile(CRSFile *newCurrentCrsFile)
 {
     currentCrsFile = newCurrentCrsFile;
+    auto VBOandVAO = currentCrsFile->getVBOandVAO();
+    vboedge = VBOandVAO[0];
+    vaoedge = VBOandVAO[1];
+    vbotri = VBOandVAO[2];
+    vaotri = VBOandVAO[3];
+    triNum = currentCrsFile->getTriNum();
+    EdgeColor=currentCrsFile->getEdgeColor();
+    TriColor=currentCrsFile->getTriColor();
+}
+
+void GISView::setCrsfiles(QVector<CRSFile *> *newCrsfiles)
+{
+    crsfiles = newCrsfiles;
 }
 
 

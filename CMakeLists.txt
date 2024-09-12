@@ -22,8 +22,8 @@ set(PROJECT_SOURCES
         gisview.cpp
         crsfile.h
         crsfile.cpp
-        crsmanager.h
-        crsmanager.cpp
+        crsfilemodel.h
+        crsfilemodel.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

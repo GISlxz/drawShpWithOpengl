@@ -32,6 +32,10 @@ CRSFile::CRSFile(const char *_fileDir):fileDir(_fileDir)
 
     // 计算中心点
     centerPointF = {(minX + maxX) / 2.0,(minY + maxY) / 2.0};
+    EdgeColor = randomColor();
+    readExteriorRing();
+    splitPoly2Tri();
+    TriColor = randomColor();
 }
 
 CRSFile::~CRSFile()
@@ -187,6 +191,39 @@ const QVector<int> *CRSFile::getEXteriorRingIndex() const
 const QVector<float> *CRSFile::getSplitTri() const
 {
     return splitTri;
+}
+
+const QVector<unsigned int> CRSFile::getVBOandVAO()
+{
+    return QVector<unsigned int>{vboedge,vaoedge,vbotri,vaotri};
+}
+
+void CRSFile::setVBOandVAO(const QVector<unsigned int> VBOandVAO)
+{
+    vboedge = VBOandVAO[0];
+    vaoedge = VBOandVAO[1];
+    vbotri = VBOandVAO[2];
+    vaotri = VBOandVAO[3];
+}
+
+QVector3D CRSFile::getEdgeColor() const
+{
+    return EdgeColor;
+}
+
+QVector3D CRSFile::getTriColor() const
+{
+    return TriColor;
+}
+
+void CRSFile::setTriNum(unsigned int newTriNum)
+{
+    triNum = newTriNum;
+}
+
+unsigned int CRSFile::getTriNum() const
+{
+    return triNum;
 }
 
 const GDALDatasetUniquePtr& CRSFile::getDataUniquePtr() const

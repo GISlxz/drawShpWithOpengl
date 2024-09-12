@@ -23,6 +23,7 @@ protected:
     virtual void paintGL() override;
 
 public:
+    void initialNewCrsFile(CRSFile *newCrsFile);
     void readExteriorRingAsBuffer();
     void drawExteriorRing();
     void readTriAsBuffer();
@@ -36,16 +37,20 @@ public:
     void updateColor();
     void setCurrentCrsFile(CRSFile *newCurrentCrsFile);
 
+    void setCrsfiles(QList<CRSFile *> *newCrsfiles);
+
 private:
+    QList<CRSFile*>* crsfiles = nullptr;
     GLuint vboedge,vaoedge,vbotri,vaotri;
     int triNum = 0;
     QOpenGLShaderProgram shaderProgramEdge;
     QOpenGLShaderProgram shaderProgramTri;
+    bool initialEnvelop = false;
     OGREnvelope envelope;//当前显示范围
     QPointF centerPointF;//当前显示中心点
     float aspectRatio;//当前缩放比（一个像素对应多少地理坐标）
-    QVector3D EdgeColor{0.4f,0.4f,0.1f};//边缘颜色
-    QVector3D TriColor{0.2f,0.6f,0.5f};//三角形颜色
+    QVector3D EdgeColor;//边缘颜色
+    QVector3D TriColor;//三角形颜色
     void checkError();
     CRSFile* currentCrsFile = nullptr;
     QPoint lastMousePos;
